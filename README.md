@@ -1,44 +1,70 @@
-# Wild Craft GitHub Profile
+# Real-Time Face-Based rPPG Heart Rate Monitor
 
-##  About Me
-Hi, I'm **Wild Craft**!  
-Im passionate about building intelligent systems, exploring cybersecurity, machine learning, and creating innovative applications.
+## Overview
+This project implements a real-time heart rate monitor using a standard webcam and computer vision techniques.  
+It uses **remote photoplethysmography (rPPG)** to measure subtle color changes in the forehead region caused by blood flow, allowing non-contact heart rate detection.
 
--  Currently working on advanced phishing detection systems with Chrome extension integration.
--  Learning more about computer vision, AI-driven security, and large-scale backend systems.
--  My projects include IoT solutions, traffic light automation, keystroke dynamics authentication, and phishing detection.
--  I love turning raw datasets into meaningful insights and impactful systems.
--  Reach me at: [Your Email Here]
-
-##  Featured Projects
-
-### 1. [Phishing Detection Backend](https://github.com/yourusername/phishing_detection_backend)
-A robust backend service with multiple phishing detection methods:
-- TLS certificate inspection
-- WHOIS domain age lookup
-- Google Safe Browsing API integration
-- OCR-based visual phishing detection
-- Machine learning-based classification
-
-### 2. [Traffic Light Scheduling System](https://github.com/yourusername/Traffic_Light_Scheduling_System)
-Smart traffic light management using IoT devices with real-time adaptive scheduling.
-
-### 3. [Keystroke Dynamics Authenticator](https://github.com/yourusername/Project_Keystroke_Dynamics_Authenticator_HMMs)
-User verification based on typing rhythm patterns using Hidden Markov Models.
-
-### 4. [Soil-Driven Crop Recommendation System](https://github.com/yourusername/Soil-Driven_Crop_Recommendation_System)
-Recommends crops based on soil nutrient data using ML models.
-
-##  GitHub Stats
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=yourusername&show_icons=true&theme=dark)
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=yourusername&layout=compact&theme=dark)
-
-##  Skills
-- Programming: Python, C, JavaScript
-- Frameworks: Flask, TailwindCSS
-- Tools: Git, Docker, Selenium, Puppeteer
-- Areas: Machine Learning, Cybersecurity, Computer Vision, IoT
+A live waveform plot of the heartbeat signal is displayed alongside the real-time video feed.
 
 ---
-*Crafting secure, intelligent, and impactful solutions.*
+
+## Features
+- Detects heart rate from the **forehead region** using Mediapipe's Face Mesh.
+- **Non-contact** — no wearable sensors required.
+- Real-time BPM calculation.
+- Live waveform plot showing raw and filtered signals.
+- Adjustable **bandpass filter** for accurate pulse extraction.
+- Works with most standard webcams.
+
+---
+
+## How It Works
+1. **Face Detection:** Uses Mediapipe Face Mesh to find facial landmarks.
+2. **ROI Extraction:** Selects a stable forehead region for analysis.
+3. **Signal Processing:**  
+   - Extracts the mean green channel intensity from the ROI.  
+   - Detrends the signal to remove lighting variation.  
+   - Applies a bandpass filter to isolate heartbeat frequencies.
+4. **BPM Calculation:** Detects peaks in the filtered signal and converts the average interval to beats per minute.
+5. **Visualization:** Displays both the video feed with BPM overlay and a real-time waveform plot.
+
+---
+
+## Installation
+
+### Requirements
+Install Python dependencies:
+```bash
+pip install opencv-python mediapipe numpy scipy matplotlib
+```
+
+---
+
+## Usage
+Run the script:
+```bash
+python face_heartbeat_with_plot.py
+```
+
+Controls:
+- Press **q** to quit.
+
+---
+
+## Parameters
+You can adjust these parameters in the script:
+- `DESIRED_FPS` — target frame rate for capture.
+- `BUFFER_SECONDS` — signal history length for analysis.
+- `LOW_CUT` / `HIGH_CUT` — bandpass filter frequency range in Hz.
+
+---
+
+## Limitations
+- Requires **good lighting** for accurate detection.
+- Works best when the subject is **still** and facing the camera.
+- Not a medical device — intended for **research and educational purposes** only.
+
+---
+
+## License
+This project is open-source under the MIT License.
