@@ -65,6 +65,3 @@ You can adjust these parameters in the script:
 - Not a medical device — intended for **research and educational purposes** only.
 
 ---
-
-## License
-This project is open-source under the MIT License.
