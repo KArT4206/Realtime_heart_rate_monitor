@@ -1,4 +1,6 @@
-# Real-Time Face-Based rPPG Heart Rate Monitor ( "STILL IN DEVELOPING" )
+# Real-Time Face-Based rPPG Heart Rate Monitor 
+
+( "STILL IN DEVELOPING" )
 
 ## Overview
 This project implements a real-time heart rate monitor using a standard webcam and computer vision techniques.  
