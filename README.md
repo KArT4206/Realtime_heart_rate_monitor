@@ -1,69 +1,36 @@
-# Real-Time Face-Based rPPG Heart Rate Monitor 
+# Real-Time Face-Based Heart Rate Monitor (rPPG)
 
-# ( "STILL IN DEVELOPING" )
+A contactless heart-rate monitor that reads your pulse from a standard webcam. Every heartbeat pushes blood through the skin of the forehead and changes its colour very slightly; the program measures that tiny green-channel flicker, filters it, and converts it to **beats per minute** in real time, drawing the live waveform beside the video. *Status: work in progress.*
 
-## Overview
-This project implements a real-time heart rate monitor using a standard webcam and computer vision techniques.  
-It uses **remote photoplethysmography (rPPG)** to measure subtle color changes in the forehead region caused by blood flow, allowing non-contact heart rate detection.
+> This repository documents the project (description, design, screenshots). The source code lives in a private repository, `Realtime_heart_rate_monitor-code`.
 
-A live waveform plot of the heartbeat signal is displayed alongside the real-time video feed.
+## Screenshot
 
----
+The signal-processing stage, run with the project's own filter and peak-detection functions on a **synthetic** 72 BPM signal (a pulse buried in noise and slow lighting drift). The app needs a live webcam, so this figure shows the pipeline rather than a face on camera. The estimate came out at 72.6 BPM.
 
-## Features
-- Detects heart rate from the **forehead region** using Mediapipe's Face Mesh.
-- **Non-contact** — no wearable sensors required.
-- Real-time BPM calculation.
-- Live waveform plot showing raw and filtered signals.
-- Adjustable **bandpass filter** for accurate pulse extraction.
-- Works with most standard webcams.
+![rPPG pipeline](docs/images/pipeline.png)
 
----
+## How it works
 
-## How It Works
-1. **Face Detection:** Uses Mediapipe Face Mesh to find facial landmarks.
-2. **ROI Extraction:** Selects a stable forehead region for analysis.
-3. **Signal Processing:**  
-   - Extracts the mean green channel intensity from the ROI.  
-   - Detrends the signal to remove lighting variation.  
-   - Applies a bandpass filter to isolate heartbeat frequencies.
-4. **BPM Calculation:** Detects peaks in the filtered signal and converts the average interval to beats per minute.
-5. **Visualization:** Displays both the video feed with BPM overlay and a real-time waveform plot.
-
----
-
-## Installation
-
-### Requirements
-Install Python dependencies:
-```bash
-pip install opencv-python mediapipe numpy scipy matplotlib
+```
+webcam frame -> face landmarks -> forehead ROI -> mean green value per frame
+   -> 12 s rolling buffer -> remove slow drift -> band-pass 0.75-3 Hz -> find peaks -> BPM
 ```
 
----
+1. **Face landmarks**: MediaPipe Face Mesh locates the face; eight landmarks (indices 10, 338, 297, 332, 284, 251, 389, 356) outline a stable forehead region, drawn as a green box on the video.
+2. **Signal**: the mean of the green channel inside that box is recorded for every frame (green absorbs the most light in haemoglobin, so it carries the clearest pulse), with timestamps, in a 12-second rolling buffer.
+3. **Detrending**: a 1-second moving average is subtracted to remove lighting and movement drift.
+4. **Band-pass filter**: a 4th-order Butterworth filter (zero-phase `filtfilt`) keeps 0.75 to 3.0 Hz, i.e. 45 to 180 BPM.
+5. **Peaks to BPM**: heartbeat peaks are found with a minimum spacing of 0.4 s; `BPM = 60 / mean peak interval`. Values outside 30 to 220 are discarded and the last eight estimates are averaged to keep the display steady.
+6. **Display**: an OpenCV window shows the video with a "Heart Rate: N BPM" overlay and a Matplotlib window plots the raw and filtered waveforms (about 4 updates per second). Press `q` to quit.
 
-## Usage
-Run the script:
-```bash
-python face_heartbeat_with_plot.py
-```
+The first reading appears after about 2 seconds of data; accuracy improves as the buffer fills.
 
-Controls:
-- Press **q** to quit.
+## Tips for good readings
+Face the camera in steady, even light; stay still; avoid strong backlight and flickering lamps.
 
----
-
-## Parameters
-You can adjust these parameters in the script:
-- `DESIRED_FPS` — target frame rate for capture.
-- `BUFFER_SECONDS` — signal history length for analysis.
-- `LOW_CUT` / `HIGH_CUT` — bandpass filter frequency range in Hz.
-
----
+## Tech stack
+Python, OpenCV, MediaPipe, NumPy, SciPy (Butterworth filter, peak finding), Matplotlib.
 
 ## Limitations
-- Requires **good lighting** for accurate detection.
-- Works best when the subject is **still** and facing the camera.
-- Not a medical device — intended for **research and educational purposes** only.
-
----
+Not a medical device. Motion, lighting changes and skin tone affect accuracy.
