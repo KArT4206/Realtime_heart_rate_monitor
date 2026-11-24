@@ -1,5 +1,7 @@
 # Real-Time Face-Based Heart Rate Monitor (rPPG)
 
+![Last commit](https://img.shields.io/github/last-commit/KArT4206/Realtime_heart_rate_monitor)
+
 A contactless heart-rate monitor that reads your pulse from a standard webcam. Every heartbeat pushes blood through the skin of the forehead and changes its colour very slightly; the program measures that tiny green-channel flicker, filters it, and converts it to **beats per minute** in real time, drawing the live waveform beside the video. *Status: work in progress.*
 
 > This repository documents the project (description, design, screenshots). The source code lives in a private repository, `Realtime_heart_rate_monitor-code`.
